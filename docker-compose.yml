@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - "3307:3306"
+    volumes:
+      - db:/var/lib/mysql
+  app:
+    depends_on:
+      - mysqldb
+    build: ./app
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - "6868:8080"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/$MYSQLDB_DATABASE?allowPublicKeyRetrieval=true&useSSL=false",
+        "spring.datasource.username" : "$MYSQLDB_USER",
+        "spring.datasource.password" : "$MYSQLDB_ROOT_PASSWORD"
+      }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+
+volumes:
+  db:
