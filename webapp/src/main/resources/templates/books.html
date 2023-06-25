@@ -8,16 +8,16 @@
 
 <form id="searchForm" action="/search" method="GET">
     <input type="text" name="searchQuery" placeholder="Search by name">
-    <button type="submit">Search</button>
+    <button id="searchButton" type="submit">Search</button>
 </form>
 
 <form id="addForm" action="/add" method="POST">
     <input type="text" name="bookName" placeholder="Book name">
-    <button type="submit">Add</button>
+    <button id="addButton" type="submit">Add</button>
 </form>
 
 <h2>Search Results</h2>
-<ul>
+<ul id="booksList">
     <!-- Iterate over the list of books and display their names -->
     <li th:each="book : ${books}" th:text="${book.name}"></li>
 </ul>
